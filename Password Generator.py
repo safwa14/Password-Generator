@@ -1,50 +1,38 @@
 import random
 import string
+import streamlit as st
 
-print("Welcome to the Password Generator!")
-length_of_word =int(input("Enter the total number of characters in the password: "))
-length_of_litters = int(input("Enter the number of letters in the password: "))
-length_of_numbers = int(input("Enter the number of numbers in the password: "))
-length_of_symbols = int(input("Enter the number of symbols in the password: "))
-thetotal = length_of_litters+length_of_numbers+length_of_symbols
+st.title("🔐 Password Generator")
 
-if thetotal!= length_of_word:
-    print("Invaild input. The sum of letters, numbers, and symbols doesn't match the password length! ")
-else:
-    select_litters = (string.ascii_letters) 
-    litters_choiced = random.choices(select_litters, k=length_of_litters)
-    print(type(litters_choiced))
-    
-    
-    select_numbers = (string.digits)
-    numbers_choiced = random.choices(select_numbers, k=length_of_numbers)
+# المستخدم يدخل البيانات من خلال Streamlit
+length_of_word = st.number_input("Enter total number of characters in the password:", min_value=1, step=1)
+length_of_litters = st.number_input("Enter number of letters:", min_value=0, step=1)
+length_of_numbers = st.number_input("Enter number of numbers:", min_value=0, step=1)
+length_of_symbols = st.number_input("Enter number of symbols:", min_value=0, step=1)
 
-    select_symbols = (string.punctuation)
-    symbols_choiced = random.choices(select_symbols, k=length_of_symbols)
+# لما المستخدم يضغط على الزر
+if st.button("Generate Password"):
+    thetotal = length_of_litters + length_of_numbers + length_of_symbols
 
-    
-    big_list = [litters_choiced, numbers_choiced, symbols_choiced]
-    flat_list = []
-    for sublist in big_list:
-        for char in sublist:
-            flat_list.append(char)
-    
-    random.shuffle(flat_list)
-    jlist= ("".join(flat_list))
+    if thetotal != length_of_word:
+        st.error("❌ Invalid input! The sum of letters, numbers, and symbols doesn't match the total length.")
+    else:
+        # توليد مكونات الباسورد
+        letters_choiced = random.choices(string.ascii_letters, k=length_of_litters)
+        numbers_choiced = random.choices(string.digits, k=length_of_numbers)
+        symbols_choiced = random.choices(string.punctuation, k=length_of_symbols)
 
-    print(f"Generator Password: {jlist}")
+        # دمجهم في قائمة وحدة
+        big_list = [letters_choiced, numbers_choiced, symbols_choiced]
+        flat_list = []
+        for sublist in big_list:
+            for char in sublist:
+                flat_list.append(char)
 
-    
-   
+        # Shuffle + Join
+        random.shuffle(flat_list)
+        password = "".join(flat_list)
 
-
-    
-    
-
-    
-    
-    
-
-
-
-
+        # عرض النتيجة
+        st.success(f"🔐 Your Generated Password: {password}")
+        st.code(password, language="text")
